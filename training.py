@@ -39,7 +39,19 @@ def train(train_set):
 
             running_loss += loss.item()
 
+    epoch_loss = 0.0
+
+    for j, (inputs, labels) in enumerate(train_loader):
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+
+        epoch_loss += loss.item()
+
     print('Finished Training')
 
-    PATH = './mnist_net.pth'
-    torch.save(net.state_dict(), PATH)
+    torch.save(net.state_dict(), './mnist_net.pth')
+    print('Loss of the network on the train images: %.3f' % (epoch_loss / j))
+    return epoch_loss / j
