@@ -39,10 +39,6 @@ def train(train_set):
 
             running_loss += loss.item()
 
-            if (i+1) % 2000 == 0:
-                print('Epoch: %d, n° of iterations: %5d, loss: %.3f' % (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
-
     print('Finished Training')
 
     PATH = './mnist_net.pth'

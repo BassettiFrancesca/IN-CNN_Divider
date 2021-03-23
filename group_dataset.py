@@ -10,8 +10,8 @@ class GroupDataset(Dataset):
     def __getitem__(self, idx):
         (x, y) = self._dataset[idx]
         for (c, group) in enumerate(self._groups):
-            if (y in group):
-                return (x, c)
+            if y in group:
+                return x, c
 
     def __len__(self):
         return len(self._dataset)

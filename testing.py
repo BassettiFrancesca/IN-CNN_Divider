@@ -30,7 +30,7 @@ def test(test_set):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-            for i in range(batch_size):
+            for i in range(len(images)):
                 label = labels[i]
                 pred = predicted[i]
                 if (label == pred):
@@ -41,4 +41,6 @@ def test(test_set):
         acc = 100 * n_class_correct[i] / n_class_samples[i]
         print('Accuracy of %s: %.3f %%' % (classes[i], acc))
 
-    print('Accuracy of the network on the 10000 test images: %.3f %%' % (100 * correct / total))
+    print('Accuracy of the network on the 10000 test images: %.3f %%\n' % (100 * correct / total))
+
+    return 100 * correct / total
