@@ -43,6 +43,8 @@ def mnist_cnn():
             print(f'Second highest accuracy: {acc[1]}, groups: {i}\n')
         if groups_a_l[i][0] == acc[len(acc) - 1]:
             print(f'Lowest accuracy: {acc[len(acc) - 1]}, groups: {i}\n')
+        if groups_a_l[i][0] == acc[len(acc) - 2]:
+            print(f'Second lowest accuracy: {acc[len(acc) - 2]}, groups: {i}\n')
 
     for i in groups_a_l:
         if groups_a_l[i][1] == losses[0]:
@@ -51,6 +53,8 @@ def mnist_cnn():
             print(f'Second lowest loss: {losses[1]}, groups: {i}\n')
         if groups_a_l[i][1] == losses[len(losses) - 1]:
             print(f'Highest loss: {losses[len(losses) - 1]}, groups: {i}\n')
+        if groups_a_l[i][1] == losses[len(losses) - 2]:
+            print(f'Second highest loss: {losses[len(losses) - 2]}, groups: {i}\n')
 
     finish = time.time()
 
