@@ -3,71 +3,68 @@ import training
 import time
 import divide_dataset
 import prepare_dataset
+import find_pairings
 import matplotlib.pyplot as plt
 
 
 def mnist_cnn():
     start = time.time()
 
-    (tr_d, te_d) = prepare_dataset.prepare_dataset([0, 1, 2, 3, 4, 5, 6, 7])
+    groups = find_pairings.find_pairings()
 
-    # groups = [[[2, 3], [5, 7]], [[2, 5], [3, 7]], [[2, 7], [3, 5]]]
-
-    groups = [[[0, 1, 2, 3], [4, 5, 6, 7]], [[0, 1, 2, 4], [3, 5, 6, 7]], [[0, 1, 2, 5], [3, 4, 6, 7]],
-              [[0, 1, 2, 6], [3, 4, 5, 7]], [[0, 1, 2, 7], [3, 4, 5, 6]], [[0, 1, 3, 4], [2, 5, 6, 7]],
-              [[0, 1, 3, 5], [2, 4, 6, 7]], [[0, 1, 3, 6], [2, 4, 5, 7]], [[0, 1, 3, 7], [2, 4, 5, 6]],
-              [[0, 1, 4, 5], [2, 3, 6, 7]], [[0, 1, 4, 6], [2, 3, 5, 7]], [[0, 1, 4, 7], [2, 3, 5, 6]],
-              [[0, 1, 5, 6], [2, 3, 4, 7]], [[0, 1, 5, 7], [2, 3, 4, 6]], [[0, 1, 6, 7], [2, 3, 4, 5]],
-              [[0, 2, 3, 4], [1, 5, 6, 7]], [[0, 2, 3, 5], [1, 4, 6, 7]], [[0, 2, 3, 6], [1, 4, 5, 7]],
-              [[0, 2, 3, 7], [1, 4, 5, 6]], [[0, 2, 4, 5], [1, 3, 6, 7]], [[0, 2, 4, 6], [1, 3, 5, 7]],
-              [[0, 2, 4, 7], [1, 3, 5, 6]], [[0, 2, 5, 6], [1, 3, 4, 7]], [[0, 2, 5, 7], [1, 3, 4, 6]],
-              [[0, 2, 6, 7], [1, 3, 4, 5]], [[0, 3, 4, 5], [1, 2, 6, 7]], [[0, 3, 4, 6], [1, 2, 5, 7]],
-              [[0, 3, 4, 7], [1, 2, 5, 6]], [[0, 3, 5, 6], [1, 2, 4, 7]], [[0, 3, 5, 7], [1, 2, 4, 6]],
-              [[0, 3, 6, 7], [1, 2, 4, 5]], [[0, 4, 5, 6], [1, 2, 3, 7]], [[0, 4, 5, 7], [1, 2, 3, 6]],
-              [[0, 4, 6, 7], [1, 2, 3, 5]], [[0, 5, 6, 7], [1, 2, 3, 4]]]
-
-    d = {}
-    a = []
-    l = []
+    groups_a_l = {}
+    acc = []
+    losses = []
 
     for g in groups:
         print(f'Groups: {g}')
+        digits = []
+        for i in g:
+            for k in i:
+                digits.append(k)
+        (tr_d, te_d) = prepare_dataset.prepare_dataset(digits)
         (train_d_set, test_d_set) = divide_dataset.divide_dataset(g, tr_d, te_d)
         loss = training.train(train_d_set)
         accuracy = testing.test(test_d_set)
-        d[str(g)] = [accuracy]
-        d[str(g)].append(loss)
-        a.append(accuracy)
-        l.append(loss)
+        groups_a_l[str(g)] = [accuracy]
+        groups_a_l[str(g)].append(loss)
+        acc.append(accuracy)
+        losses.append(loss)
 
-    a.sort()
-    a.reverse()
+    acc.sort()
+    acc.reverse()
 
-    l.sort()
+    losses.sort()
 
-    for i in d:
-        if d[i][0] == a[0]:
-            print(f'Highest accuracy: {a[0]}, groups: {i}\n')
-        if d[i][0] == a[1]:
-            print(f'Second highest accuracy: {a[1]}, groups: {i}\n')
+    for i in groups_a_l:
+        if groups_a_l[i][0] == acc[0]:
+            print(f'Highest accuracy: {acc[0]}, groups: {i}\n')
+        if groups_a_l[i][0] == acc[1]:
+            print(f'Second highest accuracy: {acc[1]}, groups: {i}\n')
+        if groups_a_l[i][0] == acc[len(acc) - 1]:
+            print(f'Lowest accuracy: {acc[len(acc) - 1]}, groups: {i}\n')
 
-    for i in d:
-        if d[i][1] == l[0]:
-            print(f'Lowest loss: {l[0]}, groups: {i}\n')
-        if d[i][1] == l[1]:
-            print(f'Second lowest loss: {l[1]}, groups: {i}\n')
+    for i in groups_a_l:
+        if groups_a_l[i][1] == losses[0]:
+            print(f'Lowest loss: {losses[0]}, groups: {i}\n')
+        if groups_a_l[i][1] == losses[1]:
+            print(f'Second lowest loss: {losses[1]}, groups: {i}\n')
+        if groups_a_l[i][1] == losses[len(losses) - 1]:
+            print(f'Highest loss: {losses[len(losses) - 1]}, groups: {i}\n')
 
     finish = time.time()
 
+    print(groups_a_l)
+
     print('Total seconds passed: %.3f' % (finish - start))
 
-    x = l
+    x = losses
     y = []
 
     for i in x:
-        for j in d:
-            if d[j][1] == i:
-                y.append(d[j][0])
+        for j in groups_a_l:
+            if groups_a_l[j][1] == i:
+                y.append(groups_a_l[j][0])
 
     plt.plot(x, y)
     plt.show()
