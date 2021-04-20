@@ -23,8 +23,6 @@ def train(train_set):
 
     for epoch in range(num_epochs):
 
-        running_loss = 0.0
-
         for i, (inputs, labels) in enumerate(train_loader):
 
             inputs = inputs.to(device)
@@ -36,8 +34,6 @@ def train(train_set):
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-
-            running_loss += loss.item()
 
     epoch_loss = 0.0
 
@@ -53,5 +49,5 @@ def train(train_set):
     print('Finished Training')
 
     torch.save(net.state_dict(), './mnist_net.pth')
-    print('Loss of the network on the train images: %.3f' % (epoch_loss / j))
-    return epoch_loss / j
+    print('Loss of the network on the train images: %.3f' % (epoch_loss / (j + 1)))
+    return epoch_loss / (j + 1)
